@@ -24,7 +24,7 @@ export default {
       await login(email.value, password.value);
 
       if (!error.value) {
-        router.push({ name: "CreatePlaylist" });
+        router.push({ name: "Home" });
       }
     };
 

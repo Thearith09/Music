@@ -14,7 +14,7 @@
 
     <div class="error"></div>
     <button v-if="!isPending">Create</button>
-    <button v-else>Saving</button>
+    <button v-else disabled>Saving...</button>
   </form>
 </template>
 
@@ -24,6 +24,7 @@ import getUser from "@/composables/getUser";
 import { timestamp } from "@/firebase/config";
 import useCollection from "@/composables/useCollection";
 import useStorage from "@/composables/useStorage";
+import { useRouter } from "vue-router";
 
 export default {
   setup() {
@@ -35,27 +36,30 @@ export default {
     const { url, filePath, uploadImage, error } = useStorage();
     const { addDoc } = useCollection("playlists");
     const { user } = getUser();
+    const router = useRouter();
 
     const handleSubmit = async () => {
       if (file.value) {
         isPending.value = true;
         await uploadImage(file.value);
 
-        await addDoc({
+        const res = await addDoc({
           title: title.value,
           description: description.value,
           userId: user.value.uid,
           username: user.value.displayName,
-          url: url.value,
+          coverUrl: url.value,
           filePath: filePath.value,
           songs: [],
           createdAt: timestamp(),
         });
+
+        isPending.value = false;
+
+        if (!error.value) {
+          router.push({ name: "PlaylistDetails", params: { id: res.id } });
+        }
       }
-
-      isPending.value = false;
-
-      if (!error.value) console.log("Playlist added!");
     };
 
     // allow file's type

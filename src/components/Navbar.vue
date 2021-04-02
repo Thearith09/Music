@@ -1,11 +1,13 @@
 <template>
   <div class="navbar">
     <nav>
-      <img src="@/assets/thearith.png" alt="thearith's photo" />
+      <img src="@/assets/img/casssette.jpg" alt="white casssette tape" />
       <h1><router-link :to="{ name: 'Home' }">Music</router-link></h1>
       <div class="links">
         <div v-if="user">
-          <router-link :to="{ name: 'CreatePlaylist' }"></router-link>
+          <router-link :to="{ name: 'CreatePlaylist' }" class="btn"
+            >Create playlist</router-link
+          >
           <button @click="handleLogout">Logout</button>
         </div>
         <div v-else>
@@ -21,7 +23,6 @@
 import useLogout from "@/composables/useLogout";
 import { useRouter } from "vue-router";
 import getUser from "@/composables/getUser";
-import { ref } from "vue";
 
 export default {
   setup() {

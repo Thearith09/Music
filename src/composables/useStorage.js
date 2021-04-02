@@ -1,5 +1,5 @@
 import { ref } from "@vue/reactivity";
-import { projectStorage } from "../firebase/config";
+import { projectAuth, projectStorage } from "../firebase/config";
 import getUser from "./getUser";
 
 const { user } = getUser();
@@ -23,7 +23,18 @@ const useStorage = () => {
         }
     };
 
-    return { error, url, filePath, uploadImage };
+    const deleteImage = async (path) => {
+        const storageRef = projectStorage.ref(path);
+
+        try {   
+            await storageRef.delete();
+
+        } catch (err) {
+            error.value = err.message
+        }
+    };
+
+    return { error, url, filePath, uploadImage, deleteImage };
 };
 
 export default useStorage;
