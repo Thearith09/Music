@@ -23,6 +23,31 @@ const useStorage = () => {
         }
     };
 
+    const uploadVideo = async (file) => {
+        filePath.value = `videos/${user.value.uid}/${file.name}`;
+        const storageRef = projectStorage.ref(filePath.value);
+
+        try {
+            const res = await  storageRef.put(file);
+            url.value = await res.ref.getDownloadURL();
+
+        } catch (err) {
+            error.value = err.message;
+            console.log(err.message);
+        }
+    };
+
+    const deleteVideo = async (path) => {
+        const storageRef = projectStorage.ref(path);
+
+        try {
+            await storageRef.delete();
+        
+        } catch (err) {
+            error.value = err.message;
+        }
+    };
+
     const deleteImage = async (path) => {
         const storageRef = projectStorage.ref(path);
 
@@ -34,7 +59,7 @@ const useStorage = () => {
         }
     };
 
-    return { error, url, filePath, uploadImage, deleteImage };
+    return { error, url, filePath, uploadImage, deleteImage, uploadVideo, deleteVideo };
 };
 
 export default useStorage;

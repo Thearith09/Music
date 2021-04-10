@@ -26,7 +26,7 @@ export default {
       await signup(email.value, password.value, displayName.value);
 
       if (!error.value) {
-        router.push({ name: "Home" });
+        router.push({ name: "UserPlaylists" });
       }
     };
 

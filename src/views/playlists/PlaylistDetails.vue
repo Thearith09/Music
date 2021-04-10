@@ -18,7 +18,22 @@
       <button v-if="isPending" disabled>Deleting</button>
     </div>
     <!-- song list -->
-    <div class="song-list">song list here</div>
+    <div class="song-list">
+      <div v-if="!playlist.songs.length">
+        No songs have been added to this playlist yet.
+      </div>
+      <div v-for="song in playlist.songs" :key="song.id" class="single-song">
+        <div class="details">
+          <h3>{{ song.title }}</h3>
+          <p>{{ song.artist }}</p>
+          <video width="420" height="120" controls :src="song.videoUrl"></video>
+        </div>
+        <button v-if="ownership" @click="handleDeleteSong(song)">
+          Delete
+        </button>
+      </div>
+      <AddSong v-if="ownership" :playlist="playlist" />
+    </div>
   </div>
 </template>
 
@@ -29,19 +44,22 @@ import { computed } from "@vue/runtime-core";
 import useDocument from "@/composables/useDocument";
 import { useRouter } from "vue-router";
 import useStorage from "@/composables/useStorage";
+import AddSong from "@/components/AddSong";
 
 export default {
   props: ["id"],
+  components: { AddSong },
   setup(props) {
     const { user } = getUser();
     const router = useRouter();
-    const { deleteImage } = useStorage();
+    const { deleteImage, deleteVideo } = useStorage();
 
     const { error: getError, document: playlist } = getDocument(
       "playlists",
       props.id
     );
-    const { error: deleteError, isPending, deleteDoc } = useDocument(
+
+    const { error: deleteError, isPending, deleteDoc, updateDoc } = useDocument(
       "playlists",
       props.id
     );
@@ -58,6 +76,12 @@ export default {
       router.push({ name: "Home" });
     };
 
+    const handleDeleteSong = async (song) => {
+      await deleteVideo(song.filePath);
+      const songs = playlist.value.songs.filter((doc) => doc.id != song.id);
+      await updateDoc({ songs });
+    };
+
     return {
       getError,
       playlist,
@@ -65,6 +89,7 @@ export default {
       isPending,
       handleDelete,
       deleteError,
+      handleDeleteSong,
     };
   },
 };
@@ -109,5 +134,13 @@ export default {
 }
 .description {
   text-align: left;
+}
+.single-song {
+  padding: 10px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px dashed var(--secondary);
+  margin-bottom: 20px;
 }
 </style>

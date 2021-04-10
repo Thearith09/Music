@@ -7,6 +7,8 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@algoz098/vue-player": "^0.4.3",
+    "@iomariani/vue-player": "^0.5.3",
     "core-js": "^3.6.5",
     "firebase": "8.3.1",
     "vue": "^3.0.0",
